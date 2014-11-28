@@ -7,21 +7,21 @@ can be one of the following 4 data-types: string, integer, float or boolean.
 
 The interface is made up of these 4 methods:
 
-Class (static) methods:
-<tt>ConfigurationAttribute.set_config_value(key, val)</tt>
+Class (static) methods:<br/>
+<tt>ConfigurationAttribute.set_config_value(key, val)</tt><br/>
 <tt>ConfigurationAttribute.get_config_value(key)</tt>
 
-Instance methods:
-<tt>ConfigurationAttribute#get_value()</tt>
+Instance methods:<br/>
+<tt>ConfigurationAttribute#get_value()</tt><br/>
 <tt>ConfigurationAttribute#set_value(val)</tt>
 
 Generally the user would only be using the class-methods to get/set configuration values.
 
 The ConfigurationAttribute table in the database only has 3 VARCHAR columns:
 
-<tt>name</tt> - (the unique, indexed key for this ConfigurationAttribute)
-<tt>attribute_value_str</tt> - (the String-formatted value)
-<tt>attribute_class</tt> - (the desired class of the stored value)
+<tt>name</tt> - (the unique, indexed key for this ConfigurationAttribute)<br/>
+<tt>attribute_value_str</tt> - (the String-formatted value)<br/>
+<tt>attribute_class</tt> - (the desired class of the stored value)<br/>
 
 On "set" operations the app will detect the class of the passed "value" object and store the desired class in the
 "attribute_class" database column. On "get" operations it will use that stored class to cast the stored value back into
