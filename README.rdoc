@@ -1,28 +1,69 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This project contains a single model, <tt>ConfigurationAttribute</tt>, and the unit tests that accompany that model.
 
-Things you may want to cover:
+The <tt>ConfigurationAttribute</tt> class is meant to store simple key-value pairs of configuration attributes. The 'value' part
+can be one of the following 4 data-types: string, integer, float or boolean.
 
-* Ruby version
+The interface is made up of these 4 methods:
 
-* System dependencies
+Class (static) methods:
+<tt>ConfigurationAttribute.set_config_value(key, val)</tt>
+<tt>ConfigurationAttribute.get_config_value(key)</tt>
 
-* Configuration
+Instance methods:
+<tt>ConfigurationAttribute#get_value()</tt>
+<tt>ConfigurationAttribute#set_value(val)</tt>
 
-* Database creation
+Generally the user would only be using the class-methods to get/set configuration values.
 
-* Database initialization
+The ConfigurationAttribute table in the database only has 3 VARCHAR columns:
 
-* How to run the test suite
+<tt>name</tt> - (the unique, indexed key for this ConfigurationAttribute)
+<tt>attribute_value_str</tt> - (the String-formatted value)
+<tt>attribute_class</tt> - (the desired class of the stored value)
 
-* Services (job queues, cache servers, search engines, etc.)
+On "set" operations the app will detect the class of the passed "value" object and store the desired class in the
+"attribute_class" database column. On "get" operations it will use that stored class to cast the stored value back into
+it's original class.
 
-* Deployment instructions
+--- --- --- --- ---
 
-* ...
+JUSTIFICATIONS:
 
+All values (regardless of type) are stored on the database level as String (VARCHAR) type.
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+The big architectural question to answer here was:
+
+"Should I declare 4 different columns for each potential type of data to be stored, or should I simply use one type of
+column to store everything and use the server to do the type-convsersions on get/set?"
+
+There are several reasons why I chose the latter option:
+
+1) It takes up less space / uses less data to use only one column for all of the data types.
+
+If I had made 4 columns, one for each type (VARCHAR, FLOAT, INTEGER, and TINYINT), then even if they were *all* set to
+NULL, the SQL server would still reserve all of the data to store each type of value, though only one was ever actually
+going to be used. That's a lot of wasted storage space: the minimum size for the value part of each
+ConfigurationAttribute row would be 10 bytes.
+
+There are two sides to every story though, and depending on what the value-data actually is, there are cases in which
+creating the 4 different column types would have actually been beneficial from a data-storage perspective. Example: the
+float 3.38382818 would be 10 bytes long as a String (1 byte for each character, 9 numerals and the decimal point is 10).
+Stored in the database as an actual FLOAT type, it would only be 4 bytes long.
+
+2) All of that stuff about storage space really only becomes relevant if there's going to be tens or hundreds
+**of thousands** of rows. Pretty much anything less than 10,000 rows is going to be storable in 1MB or less, so
+obviously this would never be problematic on any of today's hardware.
+
+Considering these are supposed to be configuration-settings, it's very doubtful in a real-world situation that there
+would be more than a few hundred (at the absolute maximum!)
+
+3) When considering what "the best" way is to write any given peice of software, really it always comes down to your
+definition of what "the best" really means. In terms of software, you're always trying to write things that are of
+maximum efficiency for the machine (CPU cycles, RAM storage, and HDD storage), but ALSO you want to write code that's
+easily readable and easily maintainable.
+
+Since this was about writing a backend for stored "configuration options", the importance of scalability goes down (see
+item #2) and the importance of maintainablity (and simplicity) goes way up. The way I chose to write this was definitely
+the simplest way to write it, and the easiest to maintain.
