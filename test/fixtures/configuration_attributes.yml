@@ -1,0 +1,24 @@
+string_conf_obj:
+  name: "welcome_msg"
+  attribute_value_str: "Hello World!"
+  attribute_class: "String"
+
+bool_conf_obj_1:
+  name: "activate_hyperspeed"
+  attribute_value_str: "true"
+  attribute_class: "TrueClass"
+
+bool_conf_obj_2:
+  name: "activate_planetary_nuke"
+  attribute_value_str: "false"
+  attribute_class: "FalseClass"
+
+float_conf_obj:
+  name: "preferred_gravity_ratio"
+  attribute_value_str: "1.10232"
+  attribute_class: "Float"
+
+int_conf_obj:
+  name: "total_number_bananas"
+  attribute_value_str: "20"
+  attribute_class: "Integer"
